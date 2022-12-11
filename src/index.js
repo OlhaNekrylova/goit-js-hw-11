@@ -1,4 +1,5 @@
 import './sass/_common.scss';
 import './gallery';
+import './search-images';
+import './images-service';
 
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
