@@ -12,11 +12,14 @@ const imagesApiService = new NewApiService();
 //   });
 // console.log(axios.isCancel('something'));
 
+refs.searchForm.addEventListener('submit', onSearch);
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
+
 function onSearch(evt) {
     evt.preventDefault();
     clearArticlesContainer();
-    imagesApiService.searchQuery = evt.currentTarget.elements.searchQuery.value;
-    if (imagesApiService.searchQuery === '') {
+    imagesApiService.query = evt.currentTarget.elements.searchQuery.value;
+    if (imagesApiService.query === '') {
         return Notify.failure('Sorry, there are no text');
     }
     imagesApiService.resetPage();

@@ -3,7 +3,7 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 export default class NewApiService {
     constructor() {
-        this.searchQuery = '';
+        this.query = '';
         this.page = 1;
     }
 

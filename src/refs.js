@@ -1,9 +1,9 @@
 const searchForm = document.querySelector('.search-form');
 const articlesContainer = document.querySelector('.gallery');
-// const countryInfo = document.querySelector('.country-info');
+const loadMoreBtn = document.querySelector('.load-more');
 
 export default {
     searchForm,
     articlesContainer,
-    // countryInfo,
+    loadMoreBtn,
 };
