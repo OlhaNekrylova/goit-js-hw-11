@@ -1,6 +1,7 @@
 import './sass/_common.scss';
 import refs from './refs';
 import NewApiService from './images-service';
+import articlesTpl from './templates/articles.hbs';
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -24,5 +25,18 @@ function onSearch(evt) {
     }
     imagesApiService.resetPage();
     imagesApiService.getImages().then(appendArticlesMarkup);
+    // SimpleLightbox.refresh();
+}
 
+function onLoadMore() {
+    imagesApiService.getImages().then(appendArticlesMarkup);
+    // SimpleLightbox.refresh();
+}
+
+function appendArticlesMarkup(articles) {
+    refs.articlesContainer.insertAdjacentHTML('beforeend', articlesTpl(articles));
+}
+
+function clearArticlesContainer() {
+    refs.articlesContainer.innerHTML = '';
 }
