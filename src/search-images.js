@@ -1,17 +1,11 @@
 import './sass/_common.scss';
 import refs from './refs';
 import NewApiService from './images-service';
-// import articlesTpl from './templates/articles.hbs';
+import articlesTpl from './templates/articles.hbs';
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const imagesApiService = new NewApiService();
-// import axios, {isCancel, AxiosError} from 'axios';
-// axios.get('/users')
-//   .then(res => {
-//     console.log(res.data);
-//   });
-// console.log(axios.isCancel('something'));
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);

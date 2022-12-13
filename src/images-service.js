@@ -19,10 +19,10 @@ export default class NewApiService {
 
         try {
             const response = await axios.get(`${BASE_URL}`);
-            const images = await response.json();
+            // const images = await response.json();
             this.page += 1;
-            return images;
-            console.log(images);
+            // return images;
+            // console.log(images);
         } catch (error) {
             console.error(error);
             Notify.failure('Sorry, there are no images matching your search query. Please try again');
