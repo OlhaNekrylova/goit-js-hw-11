@@ -1,7 +1,7 @@
 import './sass/_common.scss';
 import refs from './refs';
 import NewApiService from './images-service';
-import articlesTpl from './templates/articles.hbs';
+// import articlesTpl from './templates/articles.hbs';
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
