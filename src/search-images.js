@@ -1,5 +1,5 @@
 import './sass/_common.scss';
-
+import refs from './refs';
 import NewApiService from './images-service';
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
@@ -16,6 +16,10 @@ function onSearch(evt) {
     evt.preventDefault();
     clearArticlesContainer();
     imagesApiService.searchQuery = evt.currentTarget.elements.searchQuery.value;
-
+    if (imagesApiService.searchQuery === '') {
+        return Notify.failure('Sorry, there are no text');
+    }
+    imagesApiService.resetPage();
+    imagesApiService.getImages().then(appendArticlesMarkup);
 
 }
