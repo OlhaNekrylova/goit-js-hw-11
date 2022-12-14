@@ -15,9 +15,9 @@ export async function getImages(query, page, perPage) {
 
         try {
             const response = await axios.get(`${BASE_URL}`, options);
-            const data = await response.json();
-            this.page += 1;
-            return data;
+            const images = await response.json();
+            page += 1;
+            return images;
             
         } catch(error) {
             return Notify.failure('Sorry, there are no images matching your search query. Please try again')

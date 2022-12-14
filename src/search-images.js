@@ -18,7 +18,7 @@ refs.articlesContainer.addEventListener('click', onNewGalleryClick);
 let query = '';
 let page = 1;
 let perPage = 40;
-data = '';
+// data = '';
 
 // const galleryMarkup = createArticlesMarkup(response);
 let simpleLightBox;
@@ -55,11 +55,11 @@ function onLoadMore() {
     // simpleLightBox.destroy();
 
     getImages(query, page, perPage)
-    .then(({ data }) => {
-        renderGallery(data.hits);
+    .then(({ images }) => {
+        renderGallery(images.hits);
         simpleLightBox = new SimpleLightbox('.gallery a').refresh();
 
-        const totalPages = Math.ceil(data.totalHits / perPage);
+        const totalPages = Math.ceil(images.totalHits / perPage);
 
         if (page > totalPages) {
         refs.loadMoreBtn.classList.add('is-hidden');
@@ -92,6 +92,14 @@ function renderGallery(images) {
 
 function resetPage() {
     page = 1; 
+}
+
+function onNewGalleryClick (event) {
+    event.preventDefault();
+}
+
+function clearArticlesContainer() {
+    refs.articlesContainer.innerHTML = '';
 }
 
 // function createArticlesMarkup(hits) {
@@ -132,14 +140,7 @@ function resetPage() {
 //     captionDelay: 250,
 // });
 
-// gallery.on('show.simplelightbox', function () {
+// simpleLightBox.on('show.simplelightbox', function () {
 	
 // });
 
-function onNewGalleryClick (event) {
-    event.preventDefault();
-}
-
-function clearArticlesContainer() {
-    refs.articlesContainer.innerHTML = '';
-}
