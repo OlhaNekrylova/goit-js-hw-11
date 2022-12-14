@@ -1,14 +1,17 @@
 import './sass/_common.scss';
 import refs from './refs';
 import NewApiService from './images-service';
-import articlesTpl from './templates/articles.hbs';
-
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const imagesApiService = new NewApiService();
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
+refs.articlesContainer.addEventListener('click', onNewGalleryClick);
+
+const galleryMarkup = createArticlesMarkup(articles);
 
 function onSearch(evt) {
     evt.preventDefault();
@@ -19,16 +22,56 @@ function onSearch(evt) {
     }
     imagesApiService.resetPage();
     imagesApiService.getImages().then(appendArticlesMarkup);
-    // SimpleLightbox.refresh();
+    SimpleLightbox.refresh();
 }
 
 function onLoadMore() {
     imagesApiService.getImages().then(appendArticlesMarkup);
-    // SimpleLightbox.refresh();
+    SimpleLightbox.refresh();
+}
+
+function createArticlesMarkup(articles) {
+        return articles
+        .map(({ webformatURL, largeImageURL, tags }) => {
+            return `
+            <div class="photo-card">
+                <a class="photo-card__link" href="${largeImageURL}"></a>
+                <img class="photo-card__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
+                <div class="info">
+                    <p class="info-item">
+                        <b>{likes}</b>
+                    </p>
+                    <p class="info-item">
+                        <b>{views}</b>
+                    </p>
+                    <p class="info-item">
+                        <b>{comments}</b>
+                    </p>
+                    <p class="info-item">
+                        <b>{downloads}</b>
+                    </p>
+                </div>
+                </a>
+            </div>`
+        })
+        .join('');
+    }
+
+const gallery = new SimpleLightbox('.gallery a', {
+    // captionsData: 'alt', 
+    captionDelay: 250,
+});
+
+gallery.on('show.simplelightbox', function () {
+	
+});
+
+function onNewGalleryClick (event) {
+    event.preventDefault();
 }
 
 function appendArticlesMarkup(articles) {
-    refs.articlesContainer.insertAdjacentHTML('beforeend', articlesTpl(articles));
+    refs.articlesContainer.insertAdjacentHTML('afterbegin', galleryMarkup);
 }
 
 function clearArticlesContainer() {
