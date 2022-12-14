@@ -18,7 +18,7 @@ export default class NewApiService {
         }
 
         try {
-            const response = await axios.get(`${BASE_URL}`);
+            const response = await axios.get(`${BASE_URL}`, options);
             // const images = await response.json();
             this.page += 1;
             // return images;

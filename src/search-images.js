@@ -11,7 +11,7 @@ refs.searchForm.addEventListener('submit', onSearch);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 refs.articlesContainer.addEventListener('click', onNewGalleryClick);
 
-const galleryMarkup = createArticlesMarkup(articles);
+const galleryMarkup = createArticlesMarkup(imagesApiService);
 
 function onSearch(evt) {
     evt.preventDefault();
@@ -30,8 +30,8 @@ function onLoadMore() {
     SimpleLightbox.refresh();
 }
 
-function createArticlesMarkup(articles) {
-        return articles
+function createArticlesMarkup(imagesApiService) {
+        return imagesApiService
         .map(({ webformatURL, largeImageURL, tags }) => {
             return `
             <div class="photo-card">
@@ -57,6 +57,10 @@ function createArticlesMarkup(articles) {
         .join('');
     }
 
+function appendArticlesMarkup(imagesApiService) {
+    refs.articlesContainer.insertAdjacentHTML('afterbegin', galleryMarkup);
+}
+
 const gallery = new SimpleLightbox('.gallery a', {
     // captionsData: 'alt', 
     captionDelay: 250,
@@ -68,10 +72,6 @@ gallery.on('show.simplelightbox', function () {
 
 function onNewGalleryClick (event) {
     event.preventDefault();
-}
-
-function appendArticlesMarkup(articles) {
-    refs.articlesContainer.insertAdjacentHTML('afterbegin', galleryMarkup);
 }
 
 function clearArticlesContainer() {
