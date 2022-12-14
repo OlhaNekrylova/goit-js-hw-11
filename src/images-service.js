@@ -15,8 +15,7 @@ export async function getImages(query, page, perPage) {
 
         try {
             const response = await axios.get(`${BASE_URL}`, options);
-            const images = await response.json();
-            page += 1;
+            const images  = await response.json();
             return images;
             
         } catch(error) {

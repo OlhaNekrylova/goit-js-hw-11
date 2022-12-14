@@ -18,9 +18,7 @@ refs.articlesContainer.addEventListener('click', onNewGalleryClick);
 let query = '';
 let page = 1;
 let perPage = 40;
-// data = '';
 
-// const galleryMarkup = createArticlesMarkup(response);
 let simpleLightBox;
 
 function onSearch(evt) {
@@ -34,18 +32,17 @@ function onSearch(evt) {
     resetPage();
 
     getImages(query, page, perPage)
-    .then(({ data }) => {
-        if (data.totalHits === 0) {
+    .then(({ images }) => {
+        if (images.totalHits === 0) {
             return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-        } else {
-            renderGallery(data.hits);
-            simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-            return Notify.success(`Hooray! We found ${data.totalHits} images.`);
-
-            if (data.totalHits > perPage) {
+        } else if (images.totalHits > perPage) {
             refs.loadMoreBtn.classList.remove('is-hidden');
-            }
-        }
+        } else  {
+            refs.articlesContainer.insertAdjacentHTML('beforeend', renderGallery(images));
+            page += 1;
+            simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+            return Notify.success(`Hooray! We found ${images.totalHits} images.`); 
+        } 
         })
     .catch(error => Notify.failure('Sorry, there are no images matching your search query. Please try again'));
 }
@@ -56,23 +53,21 @@ function onLoadMore() {
 
     getImages(query, page, perPage)
     .then(({ images }) => {
-        renderGallery(images.hits);
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-
-        const totalPages = Math.ceil(images.totalHits / perPage);
-
-        if (page > totalPages) {
-        refs.loadMoreBtn.classList.add('is-hidden');
-        return Notify.failure("We're sorry, but you've reached the end of search results.");
+        if (images.totalHits < perPage) {
+            refs.loadMoreBtn.classList.add('is-hidden');
+            return Notify.failure("We're sorry, but you've reached the end of search results.");
         }
+
+        refs.articlesContainer.insertAdjacentHTML('beforeend', renderGallery(images));
+        page += 1;
+        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
     })
     .catch(error => Notify.failure('Sorry, there are no images matching your search query. Please try again'));
 }
 
 function renderGallery(images) {
     const markup = images
-        .map(image => {
-        const { largeImageURL, webformatURL, tags, likes, views, comments, downloads } = image;
+        .map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
         return `
         <div class="photo-card">
             <a class="photo-card__link" href="${largeImageURL}">
@@ -86,8 +81,8 @@ function renderGallery(images) {
             </a>
         </div>`
         })
-        .join('')
-    refs.articlesContainer.insertAdjacentHTML('beforeend', markup);
+        .join('');
+        return markup;    
 }
 
 function resetPage() {
