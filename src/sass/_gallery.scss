@@ -40,4 +40,14 @@
   .photo-card__link:hover {
     cursor: zoom-in;
   }
+
+  .info {
+    display: flex;
+    justify-content: center;
+    gap: 10px; 
+  }
+
+  .info-item {
+    color: blue;
+  }
   

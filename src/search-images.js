@@ -75,10 +75,10 @@ function renderGallery(images) {
             <a class="photo-card__link" href="${largeImageURL}">
             <img class="photo-card__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
             <div class="info">
-                <p class="info-item"><b>${likes}</b></p>
-                <p class="info-item"><b>${views}</b></p>
-                <p class="info-item"><b>${comments}</b></p>
-                <p class="info-item"><b>${downloads}</b></p>
+                <p class="info-item"><b>Likes${likes}</b></p>
+                <p class="info-item"><b>Views${views}</b></p>
+                <p class="info-item"><b>Comments${comments}</b></p>
+                <p class="info-item"><b>Downloads${downloads}</b></p>
             </div>
             </a>
         </div>`
