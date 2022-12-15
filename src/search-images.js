@@ -23,6 +23,7 @@ let simpleLightBox;
 
 function onSearch(evt) {
     evt.preventDefault();
+    page = 1;
     query = evt.currentTarget.elements.searchQuery.value.trim();
     clearArticlesContainer();
     refs.loadMoreBtn.classList.add('is-hidden');
@@ -39,7 +40,7 @@ function onSearch(evt) {
             refs.loadMoreBtn.classList.remove('is-hidden');
         } else  {
             refs.articlesContainer.insertAdjacentHTML('beforeend', renderGallery(images));
-            page += 1;
+            
             simpleLightBox = new SimpleLightbox('.gallery a').refresh();
             return Notify.success(`Hooray! We found ${images.totalHits} images.`); 
         } 
@@ -48,18 +49,19 @@ function onSearch(evt) {
 }
 
 function onLoadMore() {
-    // page += 1;
+    page += 1;
     // simpleLightBox.destroy();
 
     getImages(query, page, perPage)
     .then(({ images }) => {
-        if (images.totalHits < perPage) {
+        const totalPages = Math.ceil(data.totalHits / perPage);
+        if (page > totalPages) {
             refs.loadMoreBtn.classList.add('is-hidden');
             return Notify.failure("We're sorry, but you've reached the end of search results.");
         }
 
         refs.articlesContainer.insertAdjacentHTML('beforeend', renderGallery(images));
-        page += 1;
+        
         simpleLightBox = new SimpleLightbox('.gallery a').refresh();
     })
     .catch(error => Notify.failure('Sorry, there are no images matching your search query. Please try again'));
