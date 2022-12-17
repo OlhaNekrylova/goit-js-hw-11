@@ -74,7 +74,7 @@ function onLoadMoreBtn() {
             return Notify.failure("We're sorry, but you've reached the end of search results.");
         }
     })
-    .catch(error => Notify.failure('Sorry, there are no images matching your search query. Please try again'));
+    .catch(error => Notify.failure("We're sorry, but you've reached the end of search results."));
 }
 
 function renderGallery(images) {
