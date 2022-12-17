@@ -6,15 +6,25 @@ const API_KEY = '32048668-e2fb2d2180cb5d2e63ce535ce';
 const hits = 'hits=webformatURL,largeImageURL,tags,likes,views,comments,downloads';
 
 export async function getImages(query, page, perPage) {
-        const BASE_URL = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&${hits}&page=${page}&per_page=${perPage}`;
-        const options = {
-            headers: {
-                Autorization: 'API_KEY',
-            },
-        }
+        // const BASE_URL = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&${hits}&page=${page}&per_page=${perPage}`;
+        // const options = {
+        //     headers: {
+        //         Autorization: 'API_KEY',
+        //     },
+        // }
 
         try {
-            const response = await axios.get(`${BASE_URL}`, options);
+            const config = {
+                responseType: 'json',
+                baseURL: 'https://pixabay.com/api',
+            };
+
+
+            const response = await axios.get(
+                `/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&${hits}&page=${page}&per_page=${perPage}`, 
+                config
+                );
+            
             const images  = await response.json();
             return images;
             
