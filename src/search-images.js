@@ -1,143 +1,112 @@
-import './sass/_common.scss';
+import './sass/index.scss';
 import { getImages } from './images-service';
+import { onScroll, onToTopBtn } from './scroll';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const refs = {
-    searchForm: document.querySelector('.search-form'),
-    articlesContainer: document.querySelector('.gallery'),
-    loadMoreBtn: document.querySelector('.load-more'),
-    body: document.querySelector("body"),
-};
-
-refs.searchForm.addEventListener('submit', onSearch);
-refs.loadMoreBtn.addEventListener('click', onLoadMore);
-refs.articlesContainer.addEventListener('click', onNewGalleryClick);
+const searchForm = document.querySelector('#search-form');
+const gallery = document.querySelector('.gallery');
+// const galleryEl = document.querySelector('.gallery .a');
+const loadMoreBtn = document.querySelector('.btn-load-more');
 
 let query = '';
 let page = 1;
 let perPage = 40;
-
 let simpleLightBox;
 
-function onSearch(evt) {
+searchForm.addEventListener('submit', onSearchForm);
+loadMoreBtn.addEventListener('click', onLoadMoreBtn);
+gallery.addEventListener('click', onNewGalleryClick);
+
+onScroll();
+onToTopBtn();
+
+function onSearchForm(evt) {
     evt.preventDefault();
+    window.scrollTo({ top: 0 });
     page = 1;
-    query = evt.currentTarget.elements.searchQuery.value.trim();
-    clearArticlesContainer();
-    refs.loadMoreBtn.classList.add('is-hidden');
+    query = evt.currentTarget.searchQuery.value.trim();
+    gallery.innerHTML = '';
+    loadMoreBtn.classList.add('is-hidden');
+
     if (query === '') {
-        return Notify.failure('Sorry, there are no text');
+        return Notify.failure('The search string cannot be empty. Please specify your search query.');
     }
-    resetPage();
+    // resetPage();
 
     getImages(query, page, perPage)
-    .then(({ images }) => {
-        if (images.totalHits === 0) {
+    .then(({ data }) => {
+        if (data.totalHits > perPage) {
+            loadMoreBtn.classList.remove('is-hidden');
+        }
+
+        if (data.totalHits === 0) {
             return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-        } else if (images.totalHits > perPage) {
-            refs.loadMoreBtn.classList.remove('is-hidden');
-        } else  {
-            refs.articlesContainer.insertAdjacentHTML('beforeend', renderGallery(images));
-            
-            simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-            return Notify.success(`Hooray! We found ${images.totalHits} images.`); 
-        } 
-        })
+        } else {
+            renderGallery(data.hits);
+            simpleLightBox = new SimpleLightbox('.gallery a', {
+                captionsData: 'alt', 
+                captionDelay: 250,
+            }).refresh();
+            return Notify.success(`Hooray! We found ${data.totalHits} images.`); 
+        }
+    })
     .catch(error => Notify.failure('Sorry, there are no images matching your search query. Please try again'));
 }
 
-function onLoadMore() {
+function onLoadMoreBtn() {
     page += 1;
-    // simpleLightBox.destroy();
+    simpleLightBox.destroy();
 
     getImages(query, page, perPage)
-    .then(({ images }) => {
+    .then(({ data }) => {
         const totalPages = Math.ceil(data.totalHits / perPage);
+
+        renderGallery(data.hits);
+        simpleLightBox = new SimpleLightbox('.gallery a', {
+            captionsData: 'alt', 
+            captionDelay: 250,
+        }).refresh();
+
         if (page > totalPages) {
-            refs.loadMoreBtn.classList.add('is-hidden');
+            loadMoreBtn.classList.add('is-hidden');
             return Notify.failure("We're sorry, but you've reached the end of search results.");
         }
-
-        refs.articlesContainer.insertAdjacentHTML('beforeend', renderGallery(images));
-        
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
     })
     .catch(error => Notify.failure('Sorry, there are no images matching your search query. Please try again'));
 }
 
 function renderGallery(images) {
     const markup = images
-        .map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
+    .map(image => {
+        const { id, largeImageURL, webformatURL, tags, likes, views, comments, downloads } = image
         return `
-        <div class="photo-card">
-            <a class="photo-card__link" href="${largeImageURL}">
-            <img class="photo-card__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
+        <a class="gallery__link" href="${largeImageURL}">
+            <div class="gallery-item" id="${id}">
+            <img class="gallery-item__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
             <div class="info">
-                <p class="info-item"><b>Likes${likes}</b></p>
-                <p class="info-item"><b>Views${views}</b></p>
-                <p class="info-item"><b>Comments${comments}</b></p>
-                <p class="info-item"><b>Downloads${downloads}</b></p>
+                <p class="info-item"><b>Likes</b>${likes}</p>
+                <p class="info-item"><b>Views</b>${views}</p>
+                <p class="info-item"><b>Comments</b>${comments}</p>
+                <p class="info-item"><b>Downloads</b>${downloads}</p>
             </div>
-            </a>
-        </div>`
+            </div>
+        </a>
+        `
         })
         .join('');
-        return markup;    
-}
 
-function resetPage() {
-    page = 1; 
+        gallery.insertAdjacentHTML('beforeend', markup);   
 }
 
 function onNewGalleryClick (event) {
     event.preventDefault();
 }
 
-function clearArticlesContainer() {
-    refs.articlesContainer.innerHTML = '';
-}
-
-// function createArticlesMarkup(hits) {
-//         return imagesCard
-//         .map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
-//             return `
-//             <div class="photo-card">
-//                 <a class="photo-card__link" href="${largeImageURL}">
-//                 <img class="photo-card__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
-//                 <div class="info">
-//                     <p class="info-item">
-//                         <b>${likes}</b>
-//                     </p>
-//                     <p class="info-item">
-//                         <b>${views}</b>
-//                     </p>
-//                     <p class="info-item">
-//                         <b>${comments}</b>
-//                     </p>
-//                     <p class="info-item">
-//                         <b>${downloads}</b>
-//                     </p>
-//                 </div>
-//                 </a>
-//             </div>`
-//         })
-//         .join('');
-//     }
-
-// refs.articlesContainer.insertAdjacentHTML('afterbegin', galleryMarkup);
-
-// function appendArticlesMarkup(galleryMarkup) {
-//     refs.articlesContainer.insertAdjacentHTML('afterbegin', galleryMarkup);
+// function resetPage() {
+//     page = 1; 
 // }
 
-// const gallery = new SimpleLightbox('.gallery a', {
-//     // captionsData: 'alt', 
-//     captionDelay: 250,
-// });
 
-// simpleLightBox.on('show.simplelightbox', function () {
-	
-// });
 
