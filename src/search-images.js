@@ -45,10 +45,7 @@ function onSearchForm(evt) {
             return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         } else {
             renderGallery(data.hits);
-            simpleLightBox = new SimpleLightbox('.gallery a', {
-                captionsData: 'alt', 
-                captionDelay: 250,
-            }).refresh();
+            simpleLightBox = new SimpleLightbox('.gallery a').refresh();
             return Notify.success(`Hooray! We found ${data.totalHits} images.`); 
         }
     })
@@ -64,10 +61,7 @@ function onLoadMoreBtn() {
         const totalPages = Math.ceil(data.totalHits / perPage);
 
         renderGallery(data.hits);
-        simpleLightBox = new SimpleLightbox('.gallery a', {
-            captionsData: 'alt', 
-            captionDelay: 250,
-        }).refresh();
+        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
 
         if (page > totalPages) {
             loadMoreBtn.classList.add('is-hidden');
