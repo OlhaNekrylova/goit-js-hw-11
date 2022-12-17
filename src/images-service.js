@@ -18,7 +18,7 @@ export async function getImages(query, page, perPage) {
             return response;
             
         } catch(error) {
-            return Notify.failure('Sorry, there are no images matching your search query. Please try again')
+            return console.log(error);
         };
 }
 
