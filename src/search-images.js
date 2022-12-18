@@ -12,7 +12,7 @@ const loadMoreBtn = document.querySelector('.btn-load-more');
 let query = '';
 let page = 1;
 let perPage = 40;
-let simpleLightBox = new SimpleLightbox('.gallery a');
+let simpleLightBox; 
 
 searchForm.addEventListener('submit', onSearchForm);
 loadMoreBtn.addEventListener('click', onLoadMoreBtn);
@@ -43,7 +43,7 @@ function onSearchForm(evt) {
             return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         } else {
             renderGallery(data.hits);
-            simpleLightBox.refresh();
+            simpleLightBox = new SimpleLightbox('.gallery a').refresh();
             return Notify.success(`Hooray! We found ${data.totalHits} images.`); 
         }
     })
@@ -52,14 +52,14 @@ function onSearchForm(evt) {
 
 function onLoadMoreBtn() {
     page += 1;
-    simpleLightBox.destroy();
+    simpleLightBox = simpleLightBox.destroy();
 
     getImages(query, page, perPage)
     .then(({ data }) => {
         const totalPages = Math.ceil(data.totalHits / perPage);
 
         renderGallery(data.hits);
-        simpleLightBox.refresh();
+        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
 
         if (page > totalPages) {
             loadMoreBtn.classList.add('is-hidden');
