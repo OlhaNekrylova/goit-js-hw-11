@@ -7,13 +7,12 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-// const galleryEl = document.querySelector('.gallery .a');
 const loadMoreBtn = document.querySelector('.btn-load-more');
 
 let query = '';
 let page = 1;
 let perPage = 40;
-let simpleLightBox;
+const simpleLightBox = new SimpleLightbox('.gallery a');
 
 searchForm.addEventListener('submit', onSearchForm);
 loadMoreBtn.addEventListener('click', onLoadMoreBtn);
@@ -33,8 +32,7 @@ function onSearchForm(evt) {
     if (query === '') {
         return Notify.failure('The search string cannot be empty. Please specify your search query.');
     }
-    // resetPage();
-
+    
     getImages(query, page, perPage)
     .then(({ data }) => {
         if (data.totalHits > perPage) {
@@ -45,7 +43,7 @@ function onSearchForm(evt) {
             return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         } else {
             renderGallery(data.hits);
-            simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+            simpleLightBox.refresh();
             return Notify.success(`Hooray! We found ${data.totalHits} images.`); 
         }
     })
@@ -61,7 +59,7 @@ function onLoadMoreBtn() {
         const totalPages = Math.ceil(data.totalHits / perPage);
 
         renderGallery(data.hits);
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+        simpleLightBox.refresh();
 
         if (page > totalPages) {
             loadMoreBtn.classList.add('is-hidden');
@@ -97,10 +95,3 @@ function renderGallery(images) {
 function onNewGalleryClick (event) {
     event.preventDefault();
 }
-
-// function resetPage() {
-//     page = 1; 
-// }
-
-
-
